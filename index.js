@@ -4,7 +4,7 @@ const cron = require('node-cron');
 const { checkNewPosts } = require('./lib/nazk');
 const { generateTextFromArray } = require('./lib/utils');
 
-const port = 80;
+const port = 8080;
 let latestParsedData = [];
 
 const server = http.createServer((req, res) => {
