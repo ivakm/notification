@@ -1,23 +1,31 @@
 require('dotenv').config();
 const http = require('http');
 const cron = require('node-cron');
-const cheerio = require('cheerio');
 const { checkNewPosts } = require('./lib/nazk');
+const { generateTextFromArray } = require('./lib/utils');
 
-const port = 3000;
+const port = 80;
 let latestParsedData = [];
 
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
-  const responseText = `Виявлено нові пости:\n
-                        ${generateTextFromArray(latestParsedData)}`;
+  console.log(
+    'Request received, latestParsedDataLength = ',
+    latestParsedData.length,
+  );
+  const responseText = latestParsedData.length
+    ? `Виявлено нові пости:\n
+                        ${generateTextFromArray(latestParsedData)}`
+    : 'Не має нових постів';
   res.end(responseText);
 });
 
-server.listen(port, async () => {
+server.listen(port, '0.0.0.0', async () => {
+  console.log(`Server running on PORT=${port}`);
   try {
     latestParsedData = await checkNewPosts();
+    console.log(`Latest parsed data length: ${latestParsedData.length}`);
   } catch (error) {
     console.error('Error first nazk scraping:', error);
   }
