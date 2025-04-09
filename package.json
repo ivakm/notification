@@ -1,15 +1,17 @@
 {
   "dependencies": {
     "cheerio": "^1.0.0",
-    "node-cron": "^3.0.3"
+    "dotenv": "^16.4.7",
+    "node-cron": "^3.0.3",
+    "node-telegram-bot-api": "^0.66.0"
   },
   "name": "notification",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --watch index.js"
+    "start": "node --watch index.js",
+    "updateHeroku": "git push heroku main"
   },
   "author": "Ivakm",
   "license": "ISC",
