@@ -15,5 +15,8 @@
   },
   "author": "Ivakm",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  }
 }
