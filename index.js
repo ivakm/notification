@@ -2,7 +2,7 @@ require('dotenv').config();
 const http = require('http');
 const cron = require('node-cron');
 const { checkNewPosts } = require('./lib/nazk');
-const { generateTextFromArray, sendResponse } = require('./lib/utils');
+const { generateTextFromArray, sendResponse, getBody } = require('./lib/utils');
 const { HEADERS } = require('./lib/constants');
 const port = 8080;
 let latestParsedData = [];
