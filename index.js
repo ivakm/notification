@@ -1,12 +1,13 @@
-require('dotenv').config();
-const http = require('http');
-const cron = require('node-cron');
-const { checkNewPosts } = require('./lib/nazk');
-const { generateTextFromArray, sendResponse, getBody } = require('./lib/utils');
-const { HEADERS } = require('./lib/constants');
-const { initTelegramBot } = require('./lib/telegram-bot');
+import http from 'node:http';
+import cron from 'node-cron';
+import { checkNewPosts } from './lib/nazk.js';
+import { generateTextFromArray, sendResponse, getBody } from './lib/utils.js';
+import { HEADERS } from './lib/constants.js';
+import { initTelegramBot } from './lib/telegram-bot.js';
+import * as JSON_DB from './lib/json_db.js';
 
 const bot = initTelegramBot(process.env.TELEGRAM_BOT_TOKEN);
+const db = JSON_DB.init(process.env.JSON_DB_PATH);
 
 const port = 8080;
 let latestParsedData = [];
@@ -71,6 +72,13 @@ const types = {
   undefined: () => [404, 'Page not found'],
   function: (fn, req, res) => void fn(req, res),
 };
+
+try {
+  chatIds = await db.getData('chatIds', []);
+} catch (err) {
+  console.error(err);
+  db.push('chatIds', []);
+}
 
 const server = http.createServer((req, res) => {
   const { method, url } = req;

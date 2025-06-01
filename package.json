@@ -1,22 +1,25 @@
 {
   "dependencies": {
     "cheerio": "^1.0.0",
-    "dotenv": "^16.4.7",
+    "lowdb": "^7.0.1",
     "node-cron": "^3.0.3",
+    "node-json-db": "^2.3.1",
     "node-telegram-bot-api": "^0.66.0"
   },
   "name": "notification",
   "version": "1.0.0",
-  "main": "index.js",
+  "export": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --watch index.js",
-    "updateHeroku": "git push heroku main"
+    "start": "node --env-file=.env --watch index.js"
   },
   "author": "Ivakm",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "prettier": "^3.5.3"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
