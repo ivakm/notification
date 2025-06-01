@@ -54,7 +54,7 @@ const routing = {
 
         bot.sendMessage(
           chatId,
-          '<p>Ви додані до розсилки нотифікацій від https://public.nazk.gov.ua</p>',
+          'Ви додані до розсилки нотифікацій від <a href="https://public.nazk.gov.ua">https://public.nazk.gov.ua</a>',
           {
             parse_mode: 'HTML',
             disable_web_page_preview: true,
@@ -63,7 +63,7 @@ const routing = {
       } else {
         bot.sendMessage(
           chatId,
-          '<div><p>Ви ви вже додані до розсилки нотифікацій від https://public.nazk.gov.ua</p><p>наразі існує тільки підписка для нотифікацій.</p></div>',
+          'Ви ви вже додані до розсилки нотифікацій від <a href="https://public.nazk.gov.ua">https://public.nazk.gov.ua</a><br><b>наразі існує тільки підписка для нотифікацій.</b>',
           {
             parse_mode: 'HTML',
             disable_web_page_preview: true,
