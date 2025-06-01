@@ -35,38 +35,38 @@ const routing = {
     req,
     res,
   ) => {
-    const body = await getBody(req);
-    if (!body) return void sendResponse(res, 400, { message: 'Bad request' });
-
-    const { message, edited_message } = body;
-    const chatId = (message?.chat ?? edited_message?.chat)?.id;
-
-    if (!chatId) {
-      sendResponse(res, 400, { message: 'No chat ID found in the message' });
-      return;
-    }
-
-    if (!chatIds.includes(chatId)) {
-      chatIds.push(chatId);
-      db.push('/chatIds[]', chatId);
-      console.log(`Added chat ID ${chatId} to the list`);
-
-      bot.sendMessage(
-        chatId,
-        '<p>Ви додані до розсилки нотифікацій від https://public.nazk.gov.ua</p>',
-        {
-          parse_mode: 'HTML',
-          disable_web_page_preview: true,
-        }
-      );
-    } else {
-      bot.sendMessage(
-        chatId,
-        '<div><p>Ви ви вже додані до розсилки нотифікацій від https://public.nazk.gov.ua</p><p>наразі існує тільки підписка для нотифікацій.</p></div>',
-      );
-    }
-
     try {
+      const body = await getBody(req);
+      if (!body) return void sendResponse(res, 400, { message: 'Bad request' });
+
+      const { message, edited_message } = body;
+      const chatId = (message?.chat ?? edited_message?.chat)?.id;
+
+      if (!chatId) {
+        sendResponse(res, 400, { message: 'No chat ID found in the message' });
+        return;
+      }
+
+      if (!chatIds.includes(chatId)) {
+        chatIds.push(chatId);
+        db.push('/chatIds[]', chatId);
+        console.log(`Added chat ID ${chatId} to the list`);
+
+        bot.sendMessage(
+          chatId,
+          '<p>Ви додані до розсилки нотифікацій від https://public.nazk.gov.ua</p>',
+          {
+            parse_mode: 'HTML',
+            disable_web_page_preview: true,
+          },
+        );
+      } else {
+        bot.sendMessage(
+          chatId,
+          '<div><p>Ви ви вже додані до розсилки нотифікацій від https://public.nazk.gov.ua</p><p>наразі існує тільки підписка для нотифікацій.</p></div>',
+        );
+      }
+
       sendResponse(res, 200, 'OK');
     } catch (err) {
       console.error(err);
