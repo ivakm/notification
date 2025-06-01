@@ -54,6 +54,10 @@ const routing = {
       bot.sendMessage(
         chatId,
         '<p>Ви додані до розсилки нотифікацій від https://public.nazk.gov.ua</p>',
+        {
+          parse_mode: 'HTML',
+          disable_web_page_preview: true,
+        }
       );
     } else {
       bot.sendMessage(
