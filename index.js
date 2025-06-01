@@ -15,7 +15,7 @@ const db = JSON_DB.init(process.env.JSON_DB_PATH);
 
 const port = 8080;
 let latestParsedData = [];
-let chatIds = (await db.exists('chatIds')) ? await db.getData('chatIds') : [];
+let chatIds = (await db.exists('/chatIds')) ? await db.getData('/chatIds') : [];
 
 const routing = {
   '/': '<h1>welcome to my server</h1>',
@@ -39,11 +39,16 @@ const routing = {
     if (!body) return void sendResponse(res, 400, { message: 'Bad request' });
 
     const { message, edited_message } = body;
-    const chatId = (message?.chat ?? edited_message?.chat).id;
+    const chatId = (message?.chat ?? edited_message?.chat)?.id;
+
+    if (!chatId) {
+      sendResponse(res, 400, { message: 'No chat ID found in the message' });
+      return;
+    }
 
     if (!chatIds.includes(chatId)) {
       chatIds.push(chatId);
-      db.push('chatIds[]', chatId);
+      db.push('/chatIds[]', chatId);
       console.log(`Added chat ID ${chatId} to the list`);
 
       bot.sendMessage(
