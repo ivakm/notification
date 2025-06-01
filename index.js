@@ -9,7 +9,8 @@ import * as JSON_DB from './lib/json_db.js';
 console.log(
   `start with variables : ${process.env.TELEGRAM_BOT_TOKEN}, ${process.env.TELEGRAM_BOT_WEBHOOK_URL}, ${process.env.JSON_DB_PATH}`,
 );
-const bot = initTelegramBot(process.env.TELEGRAM_BOT_TOKEN, process.env.TELEGRAM_BOT_WEBHOOK_URL);
+const bot = initTelegramBot(process.env.TELEGRAM_BOT_TOKEN);
+await bot.setWebHook(process.env.TELEGRAM_BOT_WEBHOOK_URL);
 const db = JSON_DB.init(process.env.JSON_DB_PATH);
 
 const port = 8080;
@@ -30,7 +31,10 @@ const routing = {
 
     sendResponse(res, 200, 'refreshed');
   },
-  '/nazk/webhook': async (req, res) => {
+  [`/nazk/webhook/${process.env.TELEGRAM_BOT_TOKEN.slice(0, 10)}`]: async (
+    req,
+    res,
+  ) => {
     const body = await getBody(req);
     if (!body) return void sendResponse(res, 400, { message: 'Bad request' });
 
