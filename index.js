@@ -7,10 +7,9 @@ import { initTelegramBot, sendPostsToTelegram } from './lib/telegram-bot.js';
 import * as JSON_DB from './lib/json_db.js';
 
 console.log(
-  `start with variables : ${process.env.TELEGRAM_BOT_TOKEN}, ${process.env.JSON_DB_PATH}`,
+  `start with variables : ${process.env.TELEGRAM_BOT_TOKEN}, ${process.env.TELEGRAM_BOT_WEBHOOK_URL}, ${process.env.JSON_DB_PATH}`,
 );
-
-const bot = initTelegramBot(process.env.TELEGRAM_BOT_TOKEN);
+const bot = initTelegramBot(process.env.TELEGRAM_BOT_TOKEN, process.env.TELEGRAM_BOT_WEBHOOK_URL);
 const db = JSON_DB.init(process.env.JSON_DB_PATH);
 
 const port = 8080;
