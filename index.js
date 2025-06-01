@@ -6,6 +6,8 @@ import { HEADERS } from './lib/constants.js';
 import { initTelegramBot, sendPostsToTelegram } from './lib/telegram-bot.js';
 import * as JSON_DB from './lib/json_db.js';
 
+console.log(`start with variables :`, process.env);
+
 const bot = initTelegramBot(process.env.TELEGRAM_BOT_TOKEN);
 const db = JSON_DB.init(process.env.JSON_DB_PATH);
 
@@ -36,6 +38,7 @@ const routing = {
 
     if (!chatIds.includes(chatId)) {
       chatIds.push(chatId);
+      db.push('chatIds[]', chatId);
       console.log(`Added chat ID ${chatId} to the list`);
 
       bot.sendMessage(
@@ -112,7 +115,7 @@ cron.schedule('0 * * * *', async () => {
     latestParsedData = await checkNewPosts();
 
     sendPostsToTelegram(chatIds, latestParsedData);
-    
+
     if (latestParsedData.length > 0) {
       chatIds.forEach((chatId) => {
         bot.sendMessage(
