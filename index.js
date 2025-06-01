@@ -57,13 +57,12 @@ const routing = {
           'Ви додані до розсилки нотифікацій від https://public.nazk.gov.ua',
           {
             parse_mode: 'HTML',
-            disable_web_page_preview: true,
           },
         );
       } else {
         bot.sendMessage(
           chatId,
-          'Ви ви вже додані до розсилки нотифікацій від https://public.nazk.gov.ua&lt;/a&gt;\Наразі існує тільки підписка для нотифікацій.',
+          'Ви ви вже додані до розсилки нотифікацій від https://public.nazk.gov.ua\n Наразі існує тільки підписка для нотифікацій.',
           {
             parse_mode: 'HTML',
             disable_web_page_preview: true,
