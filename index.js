@@ -15,7 +15,7 @@ const db = JSON_DB.init(process.env.JSON_DB_PATH);
 
 const port = 8080;
 let latestParsedData = [];
-let chatIds = [];
+let chatIds = (await db.exists('chatIds')) ? await db.getData('chatIds') : [];
 
 const routing = {
   '/': '<h1>welcome to my server</h1>',
@@ -80,13 +80,6 @@ const types = {
   undefined: () => [404, 'Page not found'],
   function: (fn, req, res) => void fn(req, res),
 };
-
-try {
-  chatIds = await db.getData('chatIds', []);
-} catch (err) {
-  console.error(err);
-  db.push('chatIds', []);
-}
 
 const server = http.createServer((req, res) => {
   const { method, url } = req;
