@@ -3,7 +3,7 @@ import cron from 'node-cron';
 import { checkNewPosts } from './lib/nazk.js';
 import { generateTextFromArray, sendResponse, getBody } from './lib/utils.js';
 import { HEADERS } from './lib/constants.js';
-import { initTelegramBot } from './lib/telegram-bot.js';
+import { initTelegramBot, sendPostsToTelegram } from './lib/telegram-bot.js';
 import * as JSON_DB from './lib/json_db.js';
 
 const bot = initTelegramBot(process.env.TELEGRAM_BOT_TOKEN);
@@ -111,6 +111,8 @@ cron.schedule('0 * * * *', async () => {
   try {
     latestParsedData = await checkNewPosts();
 
+    sendPostsToTelegram(chatIds, latestParsedData);
+    
     if (latestParsedData.length > 0) {
       chatIds.forEach((chatId) => {
         bot.sendMessage(
