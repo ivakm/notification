@@ -15,6 +15,7 @@ const db = JSON_DB.init(process.env.JSON_DB_PATH);
 
 const port = 8080;
 let latestParsedData = [];
+let latestUpdateAt = null;
 let chatIds = (await db.exists('/chatIds')) ? await db.getData('/chatIds') : [];
 
 const routing = {
@@ -84,6 +85,11 @@ const routing = {
 
     sendResponse(res, 200, { message: responseText });
   },
+  '/nazk/status': async (req, res) => {
+    sendResponse(res, 200, {
+      message: `latest update at ${latestUpdateAt.toISOString()}`,
+    });
+  },
 };
 
 const types = {
@@ -114,6 +120,7 @@ server.listen(port, '0.0.0.0', async () => {
   console.log(`Server running on PORT=${port}`);
   try {
     latestParsedData = await checkNewPosts();
+    latestUpdateAt = new Date();
     console.log(`Latest parsed data length: ${latestParsedData.length}`);
   } catch (error) {
     console.error('Error first nazk scraping:', error);
@@ -123,6 +130,7 @@ server.listen(port, '0.0.0.0', async () => {
 cron.schedule('0 * * * *', async () => {
   try {
     latestParsedData = await checkNewPosts();
+    latestUpdateAt = new Date();
 
     sendPostsToTelegram(chatIds, latestParsedData);
 
