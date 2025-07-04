@@ -5,6 +5,7 @@ import { generateTextFromArray, sendResponse, getBody } from './lib/utils.js';
 import { HEADERS } from './lib/constants.js';
 import { initTelegramBot, sendPostsToTelegram } from './lib/telegram-bot.js';
 import * as JSON_DB from './lib/json_db.js';
+import { writeToFile } from './lib/file.js';
 
 console.log(
   `start with variables : ${process.env.TELEGRAM_BOT_TOKEN}, ${process.env.TELEGRAM_BOT_WEBHOOK_URL}, ${process.env.JSON_DB_PATH}`,
@@ -119,7 +120,9 @@ const server = http.createServer((req, res) => {
 server.listen(port, '0.0.0.0', async () => {
   console.log(`Server running on PORT=${port}`);
   try {
-    latestParsedData = await checkNewPosts();
+    latestParsedData = await checkNewPosts((context) => {
+      writeToFile(JSON.stringify(context));
+    });
     latestUpdateAt = new Date();
     console.log(`Latest parsed data length: ${latestParsedData.length}`);
   } catch (error) {
@@ -129,7 +132,9 @@ server.listen(port, '0.0.0.0', async () => {
 
 cron.schedule('0 * * * *', async () => {
   try {
-    latestParsedData = await checkNewPosts();
+    latestParsedData = await checkNewPosts((context) => {
+      writeToFile(JSON.stringify(context));
+    });
     latestUpdateAt = new Date();
 
     sendPostsToTelegram(chatIds, latestParsedData);
