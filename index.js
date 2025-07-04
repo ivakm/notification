@@ -24,7 +24,9 @@ const routing = {
   '/nazk/refresh': async (req, res) => {
     console.log('refreshing started...');
     try {
-      latestParsedData = await checkNewPosts();
+      latestParsedData = await checkNewPosts((context) => {
+        writeToFile(JSON.stringify(context));
+      });
       console.log(`Latest parsed data length: ${latestParsedData.length}`);
     } catch (error) {
       console.error('Error first nazk scraping:', error);
