@@ -132,26 +132,13 @@ server.listen(port, '0.0.0.0', async () => {
   }
 });
 
-cron.schedule('0 * * * *', async () => {
+cron.schedule('*/15 * * * *', async () => {
   try {
     latestParsedData = await checkNewPosts((context) => {
       writeToFile(JSON.stringify(context));
     });
     latestUpdateAt = new Date();
-
     sendPostsToTelegram(chatIds, latestParsedData);
-
-    if (latestParsedData.length > 0) {
-      chatIds.forEach((chatId) => {
-        bot.sendMessage(
-          chatId,
-          `Виявлено нові пости:\n\n${generateTextFromArray(latestParsedData)}`,
-          {
-            parse_mode: 'HTML',
-          },
-        );
-      });
-    }
   } catch (error) {
     console.error('Error nazk scraping:', error);
   }
