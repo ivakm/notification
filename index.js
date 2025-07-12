@@ -132,7 +132,7 @@ server.listen(port, '0.0.0.0', async () => {
   }
 });
 
-cron.schedule('*/15 * * * *', async () => {
+cron.schedule(process.env.CRON_SCHEDULE, async () => {
   try {
     latestParsedData = await checkNewPosts((context) => {
       writeToFile(JSON.stringify(context));
