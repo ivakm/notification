@@ -4,7 +4,7 @@ import * as JSON_DB from './lib/json_db.js';
 
 const db = JSON_DB.init(process.env.JSON_DB_PATH);
 
-let parsedData = (await db.exists('/parsedData'))
+const parsedData = await db.exists('/parsedData')
   ? await db.getData('/parsedData')
   : {};
 let latestParsedData = [];
@@ -27,4 +27,4 @@ latestParsedData = await checkNewPosts((context) => {
   console.error('Помилка:', error);
 });
 
-console.log(verifyParsedData(parsedData, latestParsedData))
+console.log(verifyParsedData(parsedData, latestParsedData));

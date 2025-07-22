@@ -1,6 +1,4 @@
-'use strict';
-
- export const config = {
+export default {
   printWidth: 80,
   singleQuote: true,
   trailingComma: 'all',
@@ -8,5 +6,3 @@
   useTabs: false,
   semi: true,
 };
-
-export default config;

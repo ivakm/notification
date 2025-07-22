@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "cheerio": "^1.0.0",
+    "eslint": "^9.31.0",
+    "eslint-config-metarhia": "^9.1.2",
     "lowdb": "^7.0.1",
     "node-cron": "^3.0.3",
     "node-json-db": "^2.3.1",
@@ -12,13 +14,15 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file=.env --watch index.js",
-    "test": "node --env-file=.env test2.mjs"
+    "test": "node --env-file=.env test2.mjs",
+    "lint": "eslint . && prettier -c \"**/*.js\"",
+    "fix": "eslint . --fix && prettier --write \"**/*.js\""
   },
   "author": "Ivakm",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "prettier": "^3.5.3"
+    "prettier": "^3.6.2"
   },
   "engines": {
     "node": ">=20"

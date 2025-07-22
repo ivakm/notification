@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable camelcase */
 import http from 'node:http';
 import cron from 'node-cron';
 import { checkNewPosts } from './lib/nazk.js';
@@ -17,8 +19,10 @@ const db = JSON_DB.init(process.env.JSON_DB_PATH);
 
 const port = 8080;
 let latestUpdateAt = null;
-let chatIds = (await db.exists('/chatIds')) ? await db.getData('/chatIds') : [];
-let parsedData = (await db.exists('/parsedData'))
+const chatIds = await db.exists('/chatIds')
+  ? await db.getData('/chatIds')
+  : [];
+const parsedData = await db.exists('/parsedData')
   ? await db.getData('/parsedData')
   : {};
 let latestParsedData = [];
@@ -103,7 +107,10 @@ const routing = {
       message: `latest update at ${latestUpdateAt.toISOString()}`,
     });
   },
-  [`/nazk/${process.env.TELEGRAM_BOT_TOKEN.slice(0, 10)}/send`]: async (req, res) => {
+  [`/nazk/${process.env.TELEGRAM_BOT_TOKEN.slice(0, 10)}/send`]: async (
+    req,
+    res,
+  ) => {
     const url = new URL(req.url, `http://localhost:${port}`);
     const chatIdsRaw = url.searchParams.getAll('chatIds');
 
@@ -124,7 +131,7 @@ const types = {
 
 const server = http.createServer((req, res) => {
   const { method, url } = req;
-  const { pathname } = new URL(req.url, `http://localhost:${port}`);
+  const { pathname } = new URL(url, `http://localhost:${port}`);
 
   for (const [header, value] of HEADERS) res.setHeader(header, value);
   if (method === 'OPTIONS') return void res.writeHead(204).end();
