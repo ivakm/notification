@@ -3,21 +3,37 @@ import cron from 'node-cron';
 import { checkNewPosts } from './lib/nazk.js';
 import { generateTextFromArray, sendResponse, getBody } from './lib/utils.js';
 import { HEADERS } from './lib/constants.js';
-import { initTelegramBot, sendPostsToTelegram } from './lib/telegram-bot.js';
+import {
+  initTelegramBot,
+  sendPostsToTelegram,
+  sendMessageToTelegram,
+} from './lib/telegram-bot.js';
 import * as JSON_DB from './lib/json_db.js';
 import { writeToFile } from './lib/file.js';
 
-console.log(
-  `start with variables : ${process.env.TELEGRAM_BOT_TOKEN}, ${process.env.TELEGRAM_BOT_WEBHOOK_URL}, ${process.env.JSON_DB_PATH}`,
-);
 const bot = initTelegramBot(process.env.TELEGRAM_BOT_TOKEN);
 await bot.setWebHook(process.env.TELEGRAM_BOT_WEBHOOK_URL);
 const db = JSON_DB.init(process.env.JSON_DB_PATH);
 
 const port = 8080;
-let latestParsedData = [];
 let latestUpdateAt = null;
 let chatIds = (await db.exists('/chatIds')) ? await db.getData('/chatIds') : [];
+let parsedData = (await db.exists('/parsedData'))
+  ? await db.getData('/parsedData')
+  : {};
+let latestParsedData = [];
+
+function verifyParsedData(parsedData, latestParsedData) {
+  latestParsedData.filter((item) => {
+    if (Reflect.has(parsedData, item.indexKey)) {
+      return false;
+    }
+
+    Reflect.set(parsedData, item.indexKey, item);
+    db.push(`/parsedData/${item.indexKey}`, item);
+    return true;
+  });
+}
 
 const routing = {
   '/': '<h1>welcome to my server</h1>',
@@ -27,6 +43,7 @@ const routing = {
       latestParsedData = await checkNewPosts((context) => {
         writeToFile(JSON.stringify(context));
       });
+
       console.log(`Latest parsed data length: ${latestParsedData.length}`);
     } catch (error) {
       console.error('Error first nazk scraping:', error);
@@ -56,21 +73,14 @@ const routing = {
         db.push('/chatIds[]', chatId);
         console.log(`Added chat ID ${chatId} to the list`);
 
-        bot.sendMessage(
-          chatId,
+        sendMessageToTelegram(
+          [chatId],
           'Ви додані до розсилки нотифікацій Вільне Радіо 🎙️🎙️🎙️ по справах - https://public.nazk.gov.ua',
-          {
-            parse_mode: 'HTML',
-          },
         );
       } else {
-        bot.sendMessage(
-          chatId,
+        sendMessageToTelegram(
+          [chatId],
           'Ви ви вже додані до розсилки нотифікацій 📻 \n Наразі існує тільки підписка для нотифікацій.',
-          {
-            parse_mode: 'HTML',
-            disable_web_page_preview: true,
-          },
         );
       }
 
@@ -138,6 +148,9 @@ cron.schedule(process.env.CRON_SCHEDULE, async () => {
       writeToFile(JSON.stringify(context));
     });
     latestUpdateAt = new Date();
+
+    // latestParsedData = verifyParsedData(parsedData, latestParsedData);
+
     sendPostsToTelegram(chatIds, latestParsedData);
   } catch (error) {
     console.error('Error nazk scraping:', error);
