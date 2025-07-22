@@ -103,6 +103,16 @@ const routing = {
       message: `latest update at ${latestUpdateAt.toISOString()}`,
     });
   },
+  [`/nazk/${process.env.TELEGRAM_BOT_TOKEN.slice(0, 10)}/send`]: async (req, res) => {
+    const url = new URL(req.url, `http://localhost:${port}`);
+    const chatIdsRaw = url.searchParams.getAll('chatIds');
+
+    sendPostsToTelegram(chatIdsRaw, latestParsedData);
+
+    sendResponse(res, 200, {
+      message: `Send to ${chatIdsRaw}`,
+    });
+  },
 };
 
 const types = {
@@ -114,11 +124,12 @@ const types = {
 
 const server = http.createServer((req, res) => {
   const { method, url } = req;
+  const { pathname } = new URL(req.url, `http://localhost:${port}`);
 
   for (const [header, value] of HEADERS) res.setHeader(header, value);
   if (method === 'OPTIONS') return void res.writeHead(204).end();
 
-  const data = routing[url];
+  const data = routing[pathname];
   const type = typeof data;
   const serializer = types[type];
   const result = serializer(data, req, res);
