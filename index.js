@@ -75,18 +75,20 @@ const routing = {
       }
 
       if (!chatIds.includes(chatId)) {
+        console.log(`before adding chat ID ${chatId} to the list`, chatIds);
         chatIds.push(chatId);
         db.push('/chatIds[]', chatId);
-        console.log(`Added chat ID ${chatId} to the list`);
+        console.log(`Added chat ID ${chatId} to the list`, chatIds);
 
         sendMessageToTelegram(
           [chatId],
           'Ви додані до розсилки нотифікацій Вільне Радіо 🎙️🎙️🎙️ по справах - https://public.nazk.gov.ua',
         );
       } else if (message.text && exitMsg.includes(message.text.trim())) {
-        const indexChatId = chatIds.indexOf(chatId);
+        const indexChatId = chatIds.findIndex(chatId);
         chatIds.splice(indexChatId, 1);
         db.delete(`/chatIds[${indexChatId}]`);
+        console.log(`Removed chat ID ${chatId} from the list`);
         sendMessageToTelegram([chatId], 'Ви відмовились від нотифікацій.');
       } else {
         sendMessageToTelegram(
