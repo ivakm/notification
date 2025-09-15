@@ -19,10 +19,10 @@ const db = JSON_DB.init(process.env.JSON_DB_PATH);
 
 const port = 8080;
 let latestUpdateAt = null;
-const chatIds = (await db.exists('/chatIds'))
+const chatIds = await db.exists('/chatIds')
   ? await db.getData('/chatIds')
   : [];
-const parsedData = (await db.exists('/parsedData'))
+const parsedData = await db.exists('/parsedData')
   ? await db.getData('/parsedData')
   : {};
 let latestParsedData = [];
@@ -85,7 +85,7 @@ const routing = {
           'Ви додані до розсилки нотифікацій Вільне Радіо 🎙️🎙️🎙️ по справах - https://public.nazk.gov.ua',
         );
       } else if (message.text && exitMsg.includes(message.text.trim())) {
-        const indexChatId = chatIds.findIndex(chatId);
+        const indexChatId = chatIds.indexOf(chatId);
         chatIds.splice(indexChatId, 1);
         db.delete(`/chatIds[${indexChatId}]`);
         console.log(`Removed chat ID ${chatId} from the list`);
